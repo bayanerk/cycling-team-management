@@ -6,17 +6,38 @@ use App\Http\Requests\StoreRideRequest;
 use App\Http\Requests\UpdateRideRequest;
 use App\Models\Ride;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class RideController extends Controller
 {
     /**
      * Public list of rides for Home Screen.
+     * Supports search by location and level.
+     * 
+     * Query parameters:
+     * - location: Filter by location (e.g., ?location=جدة)
+     * - level: Filter by level (e.g., ?level=Intermediate)
      */
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
-        $rides = Ride::with('creator:id,name,role')
-            ->orderByDesc('start_time')
+        $query = Ride::with('creator:id,name,role');
+
+        // Filter by location if provided
+        if ($request->filled('location')) {
+            $query->where('location', 'like', '%' . $request->input('location') . '%');
+        }
+
+        // Filter by level if provided
+        if ($request->filled('level')) {
+            $validLevels = ['Beginner', 'Intermediate', 'Advanced'];
+            $level = $request->input('level');
+            if (in_array($level, $validLevels)) {
+                $query->where('level', $level);
+            }
+        }
+
+        $rides = $query->orderByDesc('start_time')
             ->paginate(20);
 
         return response()->json([
