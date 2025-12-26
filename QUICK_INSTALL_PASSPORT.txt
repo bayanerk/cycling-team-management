@@ -1,0 +1,33 @@
+═══════════════════════════════════════════════════════════════
+  تثبيت Laravel Passport - خطوات سريعة
+═══════════════════════════════════════════════════════════════
+
+📌 الطريقة الأسهل (استخدم Laragon Terminal):
+
+1. افتح Laragon
+2. اضغط على Terminal (أو Cmder)
+3. شغّل هذه الأوامر بالترتيب:
+
+   cd C:\laragon\www\Mishwar-Bicklate
+   composer require laravel/passport
+   php artisan vendor:publish --tag=passport-migrations
+   php artisan migrate
+   php artisan passport:install
+   php artisan config:clear
+   php artisan cache:clear
+
+4. بعد التثبيت، افتح ملف: app/Models/User.php
+5. ابحث عن السطرين المعلّقين (//) وأزل التعليق:
+   - use Laravel\Passport\HasApiTokens;
+   - use HasApiTokens;
+
+6. احفظ الملف
+
+7. جرّب تسجيل الدخول مرة أخرى!
+
+═══════════════════════════════════════════════════════════════
+
+✅ بعد التثبيت سيعمل Token Authentication!
+
+═══════════════════════════════════════════════════════════════
+
