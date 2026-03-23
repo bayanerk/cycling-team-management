@@ -4,19 +4,16 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Address extends Model
+class Favorite extends Model
 {
     protected $fillable = [
         'user_id',
-        'city',
-        'district',
-        'street',
+        'product_id',
     ];
 
     /**
-     * Get the user that owns this address.
+     * Get the user that owns this favorite.
      */
     public function user(): BelongsTo
     {
@@ -24,10 +21,10 @@ class Address extends Model
     }
 
     /**
-     * Get all orders using this address.
+     * Get the product in this favorite.
      */
-    public function orders(): HasMany
+    public function product(): BelongsTo
     {
-        return $this->hasMany(Order::class);
+        return $this->belongsTo(Product::class);
     }
 }

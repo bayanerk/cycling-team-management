@@ -153,4 +153,68 @@ class User extends Authenticatable
     {
         return $this->role === 'rider';
     }
+
+    /**
+     * Get all cart items for this user.
+     */
+    public function cartItems(): HasMany
+    {
+        return $this->hasMany(Cart::class);
+    }
+
+    /**
+     * Get all favorites for this user.
+     */
+    public function favorites(): HasMany
+    {
+        return $this->hasMany(Favorite::class);
+    }
+
+    /**
+     * Get all orders for this user.
+     */
+    public function orders(): HasMany
+    {
+        return $this->hasMany(Order::class);
+    }
+
+    /**
+     * Get all order returns for this user.
+     */
+    public function orderReturns(): HasMany
+    {
+        return $this->hasMany(OrderReturn::class);
+    }
+
+    /**
+     * Get all payments for this user.
+     */
+    public function payments(): HasMany
+    {
+        return $this->hasMany(Payment::class);
+    }
+
+    /**
+     * Get all product reviews by this user.
+     */
+    public function productReviews(): HasMany
+    {
+        return $this->hasMany(ProductReview::class);
+    }
+
+    /**
+     * Get all notifications for this user.
+     */
+    public function notifications(): HasMany
+    {
+        return $this->hasMany(Notification::class);
+    }
+
+    /**
+     * Get unread notifications count.
+     */
+    public function unreadNotificationsCount(): int
+    {
+        return $this->notifications()->where('is_read', false)->count();
+    }
 }

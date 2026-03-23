@@ -12,9 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('memories', function (Blueprint $table) {
-            // Add new fields
-            $table->boolean('is_active')->default(true)->after('description');
-            $table->date('photo_date')->nullable()->after('is_active'); // تاريخ الصورة
+            // Add new fields only if they don't exist
+            if (!Schema::hasColumn('memories', 'is_active')) {
+                $table->boolean('is_active')->default(true)->after('description');
+            }
+            if (!Schema::hasColumn('memories', 'photo_date')) {
+                $table->date('photo_date')->nullable()->after('is_active'); // تاريخ الصورة
+            }
         });
         
         // Copy data from image_url to image_path and rename column
