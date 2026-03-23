@@ -9,4 +9,3 @@ class CreateRideParticipant extends CreateRecord
 {
     protected static string $resource = RideParticipantResource::class;
 }
-

@@ -17,4 +17,3 @@ class EditRideParticipant extends EditRecord
         ];
     }
 }
-

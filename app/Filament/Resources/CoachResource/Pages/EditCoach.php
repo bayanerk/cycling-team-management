@@ -17,4 +17,3 @@ class EditCoach extends EditRecord
         ];
     }
 }
-

@@ -9,4 +9,3 @@ class CreateCoach extends CreateRecord
 {
     protected static string $resource = CoachResource::class;
 }
-

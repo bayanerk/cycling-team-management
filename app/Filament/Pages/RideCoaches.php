@@ -16,20 +16,20 @@ class RideCoaches extends Page implements HasTable
     use InteractsWithTable;
 
     protected string $view = 'filament.pages.ride-coaches';
-    
+
     public static function getNavigationIcon(): ?string
     {
         return 'heroicon-o-user-group';
     }
-    
+
     public static function getNavigationLabel(): string
     {
-        return 'Coaches Who Joined';
+        return 'Coaches who joined';
     }
-    
+
     public static function getNavigationGroup(): ?string
     {
-        return 'إدارة الرايدات';
+        return 'Ride Management';
     }
 
     public ?int $selectedRideId = null;
@@ -56,27 +56,27 @@ class RideCoaches extends Page implements HasTable
             ->query($this->getTableQuery())
             ->columns([
                 Tables\Columns\TextColumn::make('user.name')
-                    ->label('اسم الكوتش')
+                    ->label('Coach name')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('user.email')
-                    ->label('البريد الإلكتروني')
+                    ->label('Email')
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('user.phone')
-                    ->label('رقم الهاتف')
+                    ->label('Phone')
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('ride.title')
-                    ->label('الرايد')
+                    ->label('Ride')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('ride.start_time')
-                    ->label('وقت البدء')
+                    ->label('Start time')
                     ->dateTime()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('status')
-                    ->label('الحالة')
+                    ->label('Status')
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
                         'joined' => 'success',
@@ -87,31 +87,31 @@ class RideCoaches extends Page implements HasTable
                         default => 'gray',
                     })
                     ->formatStateUsing(fn (string $state): string => match ($state) {
-                        'joined' => 'منضم',
-                        'cancelled' => 'ملغي',
-                        'excused' => 'معذور',
-                        'completed' => 'مكتمل',
-                        'no_show' => 'لم يحضر',
+                        'joined' => 'Joined',
+                        'cancelled' => 'Cancelled',
+                        'excused' => 'Excused',
+                        'completed' => 'Completed',
+                        'no_show' => 'No show',
                         default => $state,
                     }),
                 Tables\Columns\TextColumn::make('joined_at')
-                    ->label('وقت الانضمام')
+                    ->label('Joined at')
                     ->dateTime()
                     ->sortable(),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('status')
-                    ->label('الحالة')
+                    ->label('Status')
                     ->options([
-                        'joined' => 'منضم',
-                        'cancelled' => 'ملغي',
-                        'excused' => 'معذور',
-                        'completed' => 'مكتمل',
-                        'no_show' => 'لم يحضر',
+                        'joined' => 'Joined',
+                        'cancelled' => 'Cancelled',
+                        'excused' => 'Excused',
+                        'completed' => 'Completed',
+                        'no_show' => 'No show',
                     ]),
             ])
-            ->emptyStateHeading('لا توجد كوتشات مسجلة')
-            ->emptyStateDescription('اختر رايد من القائمة أعلاه لعرض الكوتشات المسجلين عليه')
+            ->emptyStateHeading('No coaches registered')
+            ->emptyStateDescription('Select a ride from the list above to see coaches registered for it.')
             ->emptyStateIcon('heroicon-o-user-group');
     }
 
@@ -121,7 +121,7 @@ class RideCoaches extends Page implements HasTable
             ->orderBy('start_time', 'desc')
             ->get()
             ->mapWithKeys(fn ($ride) => [
-                $ride->id => $ride->title . ' - ' . $ride->start_time->format('Y-m-d H:i')
+                $ride->id => $ride->title.' - '.$ride->start_time->format('Y-m-d H:i'),
             ])
             ->toArray();
     }

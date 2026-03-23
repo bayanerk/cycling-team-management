@@ -9,4 +9,3 @@ class CreateEvent extends CreateRecord
 {
     protected static string $resource = EventResource::class;
 }
-

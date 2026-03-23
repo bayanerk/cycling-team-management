@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class RegisterRequest extends FormRequest
 {
@@ -21,6 +22,11 @@ class RegisterRequest extends FormRequest
      */
     public function rules(): array
     {
+        $allowedRoles = ['coach', 'rider'];
+        if (config('app.allow_admin_registration')) {
+            $allowedRoles[] = 'admin';
+        }
+
         return [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
@@ -31,7 +37,7 @@ class RegisterRequest extends FormRequest
             'birthday' => ['nullable', 'date'],
             'profession' => ['nullable', 'string', 'max:255'],
             'profile_image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
-            'role' => ['nullable', 'in:admin,coach,rider'],
+            'role' => ['nullable', Rule::in($allowedRoles)],
             'language' => ['nullable', 'in:ar,en'],
         ];
     }
@@ -54,6 +60,7 @@ class RegisterRequest extends FormRequest
             'password.required' => 'كلمة المرور مطلوبة',
             'password.min' => 'كلمة المرور يجب أن تكون على الأقل 8 أحرف',
             'password.confirmed' => 'تأكيد كلمة المرور غير متطابق',
+            'role.in' => 'الدور غير مسموح. تسجيل حساب أدمن معطّل في هذا السيرفر (ضع ALLOW_ADMIN_REGISTRATION=true في .env إن كان مسموحاً).',
         ];
     }
 }

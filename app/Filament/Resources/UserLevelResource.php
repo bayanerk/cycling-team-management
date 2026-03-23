@@ -4,16 +4,16 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\UserLevelResource\Pages;
 use App\Models\UserLevel;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
 use Filament\Forms;
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Section;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Filament\Actions\EditAction;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
 
 class UserLevelResource extends Resource
 {
@@ -26,53 +26,53 @@ class UserLevelResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return 'إدارة المستخدمين';
+        return 'User management';
     }
 
     public static function form(Schema $schema): Schema
     {
         return $schema
             ->components([
-                Section::make('معلومات المستوى')
+                Section::make('Level information')
                     ->schema([
                         Forms\Components\Select::make('user_id')
-                            ->label('المستخدم')
+                            ->label('User')
                             ->relationship('user', 'name')
                             ->required()
                             ->searchable()
                             ->preload(),
                         Forms\Components\TextInput::make('level_name')
-                            ->label('اسم المستوى')
+                            ->label('Level name')
                             ->required()
                             ->maxLength(255)
-                            ->placeholder('مثال: Beginner, Intermediate, Advanced'),
+                            ->placeholder('e.g. Beginner, Intermediate, Advanced'),
                         Forms\Components\TextInput::make('level_number')
-                            ->label('رقم المستوى')
+                            ->label('Level number')
                             ->numeric()
                             ->required()
                             ->minValue(1),
                     ])->columns(3),
-                
-                Section::make('الإحصائيات')
+
+                Section::make('Statistics')
                     ->schema([
                         Forms\Components\TextInput::make('total_distance')
-                            ->label('إجمالي المسافة (كم)')
+                            ->label('Total distance (km)')
                             ->numeric()
                             ->minValue(0)
                             ->step(0.01)
                             ->default(0),
                         Forms\Components\TextInput::make('total_rides')
-                            ->label('إجمالي الرايدات')
+                            ->label('Total rides')
                             ->numeric()
                             ->minValue(0)
                             ->default(0),
                         Forms\Components\TextInput::make('total_points')
-                            ->label('إجمالي النقاط')
+                            ->label('Total points')
                             ->numeric()
                             ->minValue(0)
                             ->default(0),
                         Forms\Components\DateTimePicker::make('last_updated')
-                            ->label('آخر تحديث')
+                            ->label('Last updated')
                             ->default(now()),
                     ])->columns(2),
             ]);
@@ -83,11 +83,11 @@ class UserLevelResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('user.name')
-                    ->label('المستخدم')
+                    ->label('User')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('level_name')
-                    ->label('اسم المستوى')
+                    ->label('Level name')
                     ->badge()
                     ->color(fn (string $state): string => match (true) {
                         str_contains($state, 'Beginner') => 'success',
@@ -98,30 +98,30 @@ class UserLevelResource extends Resource
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('level_number')
-                    ->label('رقم المستوى')
+                    ->label('Level #')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('total_distance')
-                    ->label('إجمالي المسافة (كم)')
-                    ->formatStateUsing(fn ($state) => number_format($state, 2) . ' كم')
+                    ->label('Total distance (km)')
+                    ->formatStateUsing(fn ($state) => number_format($state, 2).' km')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('total_rides')
-                    ->label('إجمالي الرايدات')
+                    ->label('Total rides')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('total_points')
-                    ->label('إجمالي النقاط')
+                    ->label('Total points')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('last_updated')
-                    ->label('آخر تحديث')
+                    ->label('Last updated')
                     ->dateTime()
                     ->sortable(),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('level_name')
-                    ->label('اسم المستوى')
+                    ->label('Level name')
                     ->options([
-                        'Beginner' => 'مبتدئ',
-                        'Intermediate' => 'متوسط',
-                        'Advanced' => 'متقدم',
+                        'Beginner' => 'Beginner',
+                        'Intermediate' => 'Intermediate',
+                        'Advanced' => 'Advanced',
                     ]),
             ])
             ->actions([
@@ -152,4 +152,3 @@ class UserLevelResource extends Resource
         ];
     }
 }
-

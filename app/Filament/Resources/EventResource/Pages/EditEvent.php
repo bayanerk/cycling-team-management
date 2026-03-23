@@ -17,4 +17,3 @@ class EditEvent extends EditRecord
         ];
     }
 }
-

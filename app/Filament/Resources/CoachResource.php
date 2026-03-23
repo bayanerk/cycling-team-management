@@ -4,16 +4,16 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\CoachResource\Pages;
 use App\Models\Coach;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
 use Filament\Forms;
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Section;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Filament\Actions\EditAction;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
 
 class CoachResource extends Resource
 {
@@ -26,52 +26,52 @@ class CoachResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return 'إدارة المدربين';
+        return 'Coach management';
     }
 
     public static function form(Schema $schema): Schema
     {
         return $schema
             ->components([
-                Section::make('معلومات المدرب')
+                Section::make('Coach information')
                     ->schema([
                         Forms\Components\Select::make('user_id')
-                            ->label('المستخدم')
+                            ->label('User')
                             ->relationship('user', 'name')
                             ->required()
                             ->searchable()
                             ->preload(),
                         Forms\Components\Textarea::make('bio')
-                            ->label('السيرة الذاتية')
+                            ->label('Bio')
                             ->rows(3)
                             ->columnSpanFull(),
                         Forms\Components\TextInput::make('experience_years')
-                            ->label('سنوات الخبرة')
+                            ->label('Years of experience')
                             ->numeric()
                             ->minValue(0)
                             ->required(),
                         Forms\Components\TextInput::make('specialty')
-                            ->label('التخصص')
+                            ->label('Specialty')
                             ->maxLength(255)
                             ->nullable(),
                         Forms\Components\TextInput::make('rating')
-                            ->label('التقييم')
+                            ->label('Rating')
                             ->numeric()
                             ->minValue(0)
                             ->maxValue(5)
                             ->step(0.1)
                             ->nullable(),
                     ])->columns(2),
-                
-                Section::make('الصور والشهادات')
+
+                Section::make('Photos & certificates')
                     ->schema([
                         Forms\Components\FileUpload::make('image_url')
-                            ->label('صورة المدرب')
+                            ->label('Coach photo')
                             ->image()
                             ->directory('coaches')
                             ->nullable(),
                         Forms\Components\FileUpload::make('certificate')
-                            ->label('الشهادة')
+                            ->label('Certificate')
                             ->directory('certificates')
                             ->nullable(),
                     ])->columns(2),
@@ -83,24 +83,24 @@ class CoachResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\ImageColumn::make('image_url')
-                    ->label('الصورة')
+                    ->label('Photo')
                     ->circular(),
                 Tables\Columns\TextColumn::make('user.name')
-                    ->label('اسم المدرب')
+                    ->label('Coach name')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('specialty')
-                    ->label('التخصص')
+                    ->label('Specialty')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('experience_years')
-                    ->label('سنوات الخبرة')
+                    ->label('Experience (years)')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('rating')
-                    ->label('التقييم')
+                    ->label('Rating')
                     ->sortable()
                     ->formatStateUsing(fn ($state) => $state ? number_format($state, 1) : '-'),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label('تاريخ الإنشاء')
+                    ->label('Created at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -135,4 +135,3 @@ class CoachResource extends Resource
         ];
     }
 }
-

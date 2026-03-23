@@ -5,11 +5,11 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasMany as HasManyRelation;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
-use Illuminate\Database\Eloquent\Relations\HasMany as HasManyRelation;
 
 class User extends Authenticatable
 {
@@ -200,6 +200,22 @@ class User extends Authenticatable
     public function productReviews(): HasMany
     {
         return $this->hasMany(ProductReview::class);
+    }
+
+    /**
+     * Group ride booking requests submitted by this user (facilitation only; not official rides).
+     */
+    public function groupRideRequests(): HasMany
+    {
+        return $this->hasMany(GroupRideRequest::class);
+    }
+
+    /**
+     * Group ride booking requests reviewed by this user (admin).
+     */
+    public function reviewedGroupRideRequests(): HasMany
+    {
+        return $this->hasMany(GroupRideRequest::class, 'reviewed_by');
     }
 
     /**

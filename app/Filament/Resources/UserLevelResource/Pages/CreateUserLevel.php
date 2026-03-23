@@ -9,4 +9,3 @@ class CreateUserLevel extends CreateRecord
 {
     protected static string $resource = UserLevelResource::class;
 }
-

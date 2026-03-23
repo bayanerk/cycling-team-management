@@ -73,6 +73,7 @@ class RideParticipant extends Model
         }
 
         $twoHoursAgo = now()->subHours(2);
+
         return $this->joined_at->isAfter($twoHoursAgo);
     }
 
@@ -81,7 +82,7 @@ class RideParticipant extends Model
      */
     public function canExcuse(): bool
     {
-        if (!in_array($this->status, ['joined', 'cancelled'])) {
+        if (! in_array($this->status, ['joined', 'cancelled'])) {
             return false;
         }
 

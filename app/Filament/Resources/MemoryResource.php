@@ -4,16 +4,16 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\MemoryResource\Pages;
 use App\Models\Memory;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
 use Filament\Forms;
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Section;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Filament\Actions\EditAction;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
 
 class MemoryResource extends Resource
 {
@@ -26,33 +26,33 @@ class MemoryResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return 'إدارة الذكريات';
+        return 'Memories';
     }
 
     public static function form(Schema $schema): Schema
     {
         return $schema
             ->components([
-                Section::make('معلومات الذكرى')
+                Section::make('Memory details')
                     ->schema([
                         Forms\Components\FileUpload::make('image_path')
-                            ->label('الصورة')
+                            ->label('Image')
                             ->image()
                             ->required()
                             ->directory('memories')
                             ->maxSize(5120),
                         Forms\Components\Textarea::make('description')
-                            ->label('الوصف')
+                            ->label('Description')
                             ->rows(3)
                             ->columnSpanFull(),
                         Forms\Components\DatePicker::make('photo_date')
-                            ->label('تاريخ الصورة')
+                            ->label('Photo date')
                             ->required()
                             ->default(now()),
                         Forms\Components\Toggle::make('is_active')
-                            ->label('نشط')
+                            ->label('Active')
                             ->default(true)
-                            ->helperText('الذكريات النشطة فقط ستظهر في التطبيق'),
+                            ->helperText('Only active memories are shown in the app'),
                     ])->columns(2),
             ]);
     }
@@ -62,34 +62,34 @@ class MemoryResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\ImageColumn::make('image_path')
-                    ->label('الصورة')
+                    ->label('Image')
                     ->circular(),
                 Tables\Columns\TextColumn::make('description')
-                    ->label('الوصف')
+                    ->label('Description')
                     ->limit(50)
                     ->searchable(),
                 Tables\Columns\TextColumn::make('photo_date')
-                    ->label('تاريخ الصورة')
+                    ->label('Photo date')
                     ->date()
                     ->sortable(),
                 Tables\Columns\IconColumn::make('is_active')
-                    ->label('نشط')
+                    ->label('Active')
                     ->boolean(),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label('تاريخ الإنشاء')
+                    ->label('Created at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 Tables\Filters\TernaryFilter::make('is_active')
-                    ->label('نشط'),
+                    ->label('Active'),
                 Tables\Filters\Filter::make('photo_date')
                     ->form([
                         Forms\Components\DatePicker::make('from')
-                            ->label('من تاريخ'),
+                            ->label('From'),
                         Forms\Components\DatePicker::make('until')
-                            ->label('إلى تاريخ'),
+                            ->label('Until'),
                     ])
                     ->query(function ($query, array $data) {
                         return $query
@@ -131,4 +131,3 @@ class MemoryResource extends Resource
         ];
     }
 }
-

@@ -35,4 +35,15 @@ return [
         ],
     ],
 
+    /*
+    | Hugging Face Space: ibrahim444/bike (FastAPI — Bike Pothole Detector)
+    | Docs in app: POST /predict with { "data": [[8 floats], ...] }
+    | Public URL pattern: https://{user}-{space}.hf.space
+    */
+    'huggingface_bike' => [
+        'base_url' => rtrim(env('HUGGINGFACE_BIKE_SPACE_URL', 'https://ibrahim444-bike.hf.space'), '/'),
+        'token' => env('HUGGINGFACE_API_TOKEN'),
+        'timeout' => (int) env('HUGGINGFACE_BIKE_TIMEOUT', 120),
+    ],
+
 ];

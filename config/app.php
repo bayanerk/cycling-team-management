@@ -123,4 +123,18 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Allow admin self-registration (API)
+    |--------------------------------------------------------------------------
+    |
+    | When true, POST /api/auth/register may include "role": "admin".
+    | Keep false on production unless you intentionally enable it via .env.
+    |
+    */
+
+    'allow_admin_registration' => env('ALLOW_ADMIN_REGISTRATION') === null
+        ? env('APP_ENV', 'production') === 'local'
+        : filter_var(env('ALLOW_ADMIN_REGISTRATION'), FILTER_VALIDATE_BOOLEAN),
+
 ];

@@ -9,4 +9,3 @@ class CreateRideTrack extends CreateRecord
 {
     protected static string $resource = RideTrackResource::class;
 }
-

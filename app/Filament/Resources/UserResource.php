@@ -4,16 +4,16 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\UserResource\Pages;
 use App\Models\User;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
 use Filament\Forms;
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Section;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Filament\Actions\EditAction;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
 use Illuminate\Support\Facades\Hash;
 
 class UserResource extends Resource
@@ -27,89 +27,89 @@ class UserResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return 'إدارة المستخدمين';
+        return 'User management';
     }
 
     public static function form(Schema $schema): Schema
     {
         return $schema
             ->components([
-                Section::make('معلومات أساسية')
+                Section::make('Basic information')
                     ->schema([
                         Forms\Components\TextInput::make('name')
-                            ->label('الاسم')
+                            ->label('Name')
                             ->required()
                             ->maxLength(255),
                         Forms\Components\TextInput::make('email')
-                            ->label('البريد الإلكتروني')
+                            ->label('Email')
                             ->email()
                             ->required()
                             ->maxLength(255)
                             ->unique(ignoreRecord: true),
                         Forms\Components\TextInput::make('phone')
-                            ->label('رقم الهاتف')
+                            ->label('Phone')
                             ->tel()
                             ->maxLength(20)
                             ->unique(ignoreRecord: true),
                         Forms\Components\TextInput::make('password')
-                            ->label('كلمة المرور')
+                            ->label('Password')
                             ->password()
                             ->dehydrateStateUsing(fn ($state) => Hash::make($state))
                             ->dehydrated(fn ($state) => filled($state))
                             ->required(fn (string $context): bool => $context === 'create')
                             ->maxLength(255),
                     ])->columns(2),
-                
-                Section::make('معلومات إضافية')
+
+                Section::make('Additional information')
                     ->schema([
                         Forms\Components\Select::make('role')
-                            ->label('الدور')
+                            ->label('Role')
                             ->options([
-                                'admin' => 'مدير',
-                                'coach' => 'مدرب',
-                                'rider' => 'راكب',
+                                'admin' => 'Admin',
+                                'coach' => 'Coach',
+                                'rider' => 'Rider',
                             ])
                             ->required()
                             ->default('rider'),
                         Forms\Components\Select::make('gender')
-                            ->label('الجنس')
+                            ->label('Gender')
                             ->options([
-                                'male' => 'ذكر',
-                                'female' => 'أنثى',
+                                'male' => 'Male',
+                                'female' => 'Female',
                             ])
                             ->nullable(),
                         Forms\Components\TextInput::make('age')
-                            ->label('العمر')
+                            ->label('Age')
                             ->numeric()
                             ->nullable(),
                         Forms\Components\DatePicker::make('birthday')
-                            ->label('تاريخ الميلاد')
+                            ->label('Birthday')
                             ->nullable(),
                         Forms\Components\TextInput::make('profession')
-                            ->label('المهنة')
+                            ->label('Profession')
                             ->maxLength(255)
                             ->nullable(),
                         Forms\Components\Select::make('language')
-                            ->label('اللغة')
+                            ->label('Language')
                             ->options([
-                                'ar' => 'العربية',
+                                'ar' => 'Arabic',
                                 'en' => 'English',
                             ])
                             ->default('ar'),
                     ])->columns(3),
-                
-                Section::make('الصورة والحالة')
+
+                Section::make('Profile & status')
                     ->schema([
                         Forms\Components\FileUpload::make('profile_image')
-                            ->label('صورة الملف الشخصي')
+                            ->label('Profile photo')
                             ->image()
                             ->directory('profiles')
                             ->nullable(),
                         Forms\Components\Toggle::make('is_active')
-                            ->label('نشط')
+                            ->label('Active')
                             ->default(true),
                         Forms\Components\Toggle::make('is_coach_approved')
-                            ->label('موافقة المدرب')
+                            ->label('Coach approved')
                             ->default(false)
                             ->visible(fn ($get) => $get('role') === 'coach'),
                     ])->columns(2),
@@ -121,22 +121,22 @@ class UserResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\ImageColumn::make('profile_image')
-                    ->label('الصورة')
+                    ->label('Photo')
                     ->circular()
                     ->defaultImageUrl(url('/images/default-avatar.png')),
                 Tables\Columns\TextColumn::make('name')
-                    ->label('الاسم')
+                    ->label('Name')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('email')
-                    ->label('البريد الإلكتروني')
+                    ->label('Email')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('phone')
-                    ->label('الهاتف')
+                    ->label('Phone')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('role')
-                    ->label('الدور')
+                    ->label('Role')
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
                         'admin' => 'danger',
@@ -145,30 +145,30 @@ class UserResource extends Resource
                         default => 'gray',
                     })
                     ->formatStateUsing(fn (string $state): string => match ($state) {
-                        'admin' => 'مدير',
-                        'coach' => 'مدرب',
-                        'rider' => 'راكب',
+                        'admin' => 'Admin',
+                        'coach' => 'Coach',
+                        'rider' => 'Rider',
                         default => $state,
                     }),
                 Tables\Columns\IconColumn::make('is_active')
-                    ->label('نشط')
+                    ->label('Active')
                     ->boolean(),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label('تاريخ الإنشاء')
+                    ->label('Created at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('role')
-                    ->label('الدور')
+                    ->label('Role')
                     ->options([
-                        'admin' => 'مدير',
-                        'coach' => 'مدرب',
-                        'rider' => 'راكب',
+                        'admin' => 'Admin',
+                        'coach' => 'Coach',
+                        'rider' => 'Rider',
                     ]),
                 Tables\Filters\TernaryFilter::make('is_active')
-                    ->label('نشط'),
+                    ->label('Active'),
             ])
             ->actions([
                 EditAction::make(),
@@ -197,4 +197,3 @@ class UserResource extends Resource
         ];
     }
 }
-

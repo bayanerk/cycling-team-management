@@ -4,16 +4,16 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\RideTrackResource\Pages;
 use App\Models\RideTrack;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
 use Filament\Forms;
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Section;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Filament\Actions\EditAction;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
 
 class RideTrackResource extends Resource
 {
@@ -26,49 +26,49 @@ class RideTrackResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return 'إدارة الرايدات';
+        return 'Ride Management';
     }
 
     public static function form(Schema $schema): Schema
     {
         return $schema
             ->components([
-                Section::make('معلومات المسار')
+                Section::make('Track information')
                     ->schema([
                         Forms\Components\Select::make('ride_id')
-                            ->label('الرايد')
+                            ->label('Ride')
                             ->relationship('ride', 'title')
                             ->required()
                             ->searchable()
                             ->preload(),
                         Forms\Components\Select::make('ride_participant_id')
-                            ->label('المشارك')
+                            ->label('Participant')
                             ->relationship('participant', 'id', fn ($query) => $query->with('user'))
                             ->required()
                             ->searchable()
                             ->preload()
                             ->getOptionLabelFromRecordUsing(fn ($record) => $record->user->name ?? "Participant #{$record->id}"),
                     ])->columns(2),
-                
-                Section::make('الموقع الجغرافي')
+
+                Section::make('Location')
                     ->schema([
                         Forms\Components\TextInput::make('lat')
-                            ->label('خط العرض')
+                            ->label('Latitude')
                             ->numeric()
                             ->required()
                             ->step(0.0000001),
                         Forms\Components\TextInput::make('lng')
-                            ->label('خط الطول')
+                            ->label('Longitude')
                             ->numeric()
                             ->required()
                             ->step(0.0000001),
                         Forms\Components\TextInput::make('speed')
-                            ->label('السرعة (كم/س)')
+                            ->label('Speed (km/h)')
                             ->numeric()
                             ->minValue(0)
                             ->nullable(),
                         Forms\Components\DateTimePicker::make('recorded_at')
-                            ->label('وقت التسجيل')
+                            ->label('Recorded at')
                             ->required()
                             ->default(now()),
                     ])->columns(2),
@@ -80,31 +80,31 @@ class RideTrackResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('ride.title')
-                    ->label('الرايد')
+                    ->label('Ride')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('participant.user.name')
-                    ->label('المشارك')
+                    ->label('Participant')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('lat')
-                    ->label('خط العرض')
+                    ->label('Latitude')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('lng')
-                    ->label('خط الطول')
+                    ->label('Longitude')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('speed')
-                    ->label('السرعة (كم/س)')
-                    ->formatStateUsing(fn ($state) => $state ? number_format($state, 2) . ' كم/س' : '-')
+                    ->label('Speed (km/h)')
+                    ->formatStateUsing(fn ($state) => $state ? number_format($state, 2).' km/h' : '-')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('recorded_at')
-                    ->label('وقت التسجيل')
+                    ->label('Recorded at')
                     ->dateTime()
                     ->sortable(),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('ride_id')
-                    ->label('الرايد')
+                    ->label('Ride')
                     ->relationship('ride', 'title'),
             ])
             ->actions([
@@ -135,4 +135,3 @@ class RideTrackResource extends Resource
         ];
     }
 }
-

@@ -9,4 +9,3 @@ class CreateMemory extends CreateRecord
 {
     protected static string $resource = MemoryResource::class;
 }
-

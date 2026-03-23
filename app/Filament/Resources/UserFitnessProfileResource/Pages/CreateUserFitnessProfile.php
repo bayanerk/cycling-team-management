@@ -9,4 +9,3 @@ class CreateUserFitnessProfile extends CreateRecord
 {
     protected static string $resource = UserFitnessProfileResource::class;
 }
-

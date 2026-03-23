@@ -4,16 +4,16 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\RideParticipantResource\Pages;
 use App\Models\RideParticipant;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
 use Filament\Forms;
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Section;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Filament\Actions\EditAction;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
 
 class RideParticipantResource extends Resource
 {
@@ -26,90 +26,90 @@ class RideParticipantResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return 'إدارة الرايدات';
+        return 'Ride Management';
     }
 
     public static function form(Schema $schema): Schema
     {
         return $schema
             ->components([
-                Section::make('معلومات المشاركة')
+                Section::make('Participation')
                     ->schema([
                         Forms\Components\Select::make('ride_id')
-                            ->label('الرايد')
+                            ->label('Ride')
                             ->relationship('ride', 'title')
                             ->required()
                             ->searchable()
                             ->preload(),
                         Forms\Components\Select::make('user_id')
-                            ->label('المستخدم')
+                            ->label('User')
                             ->relationship('user', 'name')
                             ->required()
                             ->searchable()
                             ->preload(),
                         Forms\Components\Select::make('role')
-                            ->label('الدور')
+                            ->label('Role')
                             ->options([
-                                'rider' => 'راكب',
-                                'coach' => 'مدرب',
+                                'rider' => 'Rider',
+                                'coach' => 'Coach',
                             ])
                             ->default('rider')
                             ->required(),
                         Forms\Components\Select::make('status')
-                            ->label('الحالة')
+                            ->label('Status')
                             ->options([
-                                'joined' => 'منضم',
-                                'cancelled' => 'ملغي',
-                                'excused' => 'معذور',
-                                'completed' => 'مكتمل',
-                                'no_show' => 'لم يحضر',
+                                'joined' => 'Joined',
+                                'cancelled' => 'Cancelled',
+                                'excused' => 'Excused',
+                                'completed' => 'Completed',
+                                'no_show' => 'No show',
                             ])
                             ->required()
                             ->default('joined'),
                     ])->columns(2),
-                
-                Section::make('تفاصيل الأداء')
+
+                Section::make('Performance')
                     ->schema([
                         Forms\Components\TextInput::make('distance_km')
-                            ->label('المسافة (كم)')
+                            ->label('Distance (km)')
                             ->numeric()
                             ->minValue(0)
                             ->step(0.01)
                             ->nullable(),
                         Forms\Components\TextInput::make('avg_speed_kmh')
-                            ->label('متوسط السرعة (كم/س)')
+                            ->label('Avg. speed (km/h)')
                             ->numeric()
                             ->minValue(0)
                             ->step(0.01)
                             ->nullable(),
                         Forms\Components\TextInput::make('calories_burned')
-                            ->label('السعرات الحرارية')
+                            ->label('Calories burned')
                             ->numeric()
                             ->minValue(0)
                             ->nullable(),
                         Forms\Components\TextInput::make('points_earned')
-                            ->label('النقاط المكتسبة')
+                            ->label('Points earned')
                             ->numeric()
                             ->minValue(0)
                             ->nullable(),
                     ])->columns(2),
-                
-                Section::make('الأوقات')
+
+                Section::make('Timestamps')
                     ->schema([
                         Forms\Components\DateTimePicker::make('joined_at')
-                            ->label('وقت الانضمام')
+                            ->label('Joined at')
                             ->nullable(),
                         Forms\Components\DateTimePicker::make('cancelled_at')
-                            ->label('وقت الإلغاء')
+                            ->label('Cancelled at')
                             ->nullable(),
                         Forms\Components\DateTimePicker::make('excused_at')
-                            ->label('وقت العذر')
+                            ->label('Excused at')
                             ->nullable(),
                         Forms\Components\DateTimePicker::make('completed_at')
-                            ->label('وقت الإكمال')
+                            ->label('Completed at')
                             ->nullable(),
                         Forms\Components\DateTimePicker::make('checked_at')
-                            ->label('وقت التحقق')
+                            ->label('Checked at')
                             ->nullable(),
                     ])->columns(2),
             ]);
@@ -120,15 +120,15 @@ class RideParticipantResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('ride.title')
-                    ->label('الرايد')
+                    ->label('Ride')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('user.name')
-                    ->label('المستخدم')
+                    ->label('User')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('role')
-                    ->label('الدور')
+                    ->label('Role')
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
                         'rider' => 'success',
@@ -136,12 +136,12 @@ class RideParticipantResource extends Resource
                         default => 'gray',
                     })
                     ->formatStateUsing(fn (string $state): string => match ($state) {
-                        'rider' => 'راكب',
-                        'coach' => 'مدرب',
+                        'rider' => 'Rider',
+                        'coach' => 'Coach',
                         default => $state,
                     }),
                 Tables\Columns\TextColumn::make('status')
-                    ->label('الحالة')
+                    ->label('Status')
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
                         'joined' => 'success',
@@ -152,43 +152,43 @@ class RideParticipantResource extends Resource
                         default => 'gray',
                     })
                     ->formatStateUsing(fn (string $state): string => match ($state) {
-                        'joined' => 'منضم',
-                        'cancelled' => 'ملغي',
-                        'excused' => 'معذور',
-                        'completed' => 'مكتمل',
-                        'no_show' => 'لم يحضر',
+                        'joined' => 'Joined',
+                        'cancelled' => 'Cancelled',
+                        'excused' => 'Excused',
+                        'completed' => 'Completed',
+                        'no_show' => 'No show',
                         default => $state,
                     }),
                 Tables\Columns\TextColumn::make('distance_km')
-                    ->label('المسافة (كم)')
-                    ->formatStateUsing(fn ($state) => $state ? number_format($state, 2) . ' كم' : '-')
+                    ->label('Distance (km)')
+                    ->formatStateUsing(fn ($state) => $state ? number_format($state, 2).' km' : '-')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('points_earned')
-                    ->label('النقاط')
+                    ->label('Points')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('joined_at')
-                    ->label('وقت الانضمام')
+                    ->label('Joined at')
                     ->dateTime()
                     ->sortable(),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('status')
-                    ->label('الحالة')
+                    ->label('Status')
                     ->options([
-                        'joined' => 'منضم',
-                        'cancelled' => 'ملغي',
-                        'excused' => 'معذور',
-                        'completed' => 'مكتمل',
-                        'no_show' => 'لم يحضر',
+                        'joined' => 'Joined',
+                        'cancelled' => 'Cancelled',
+                        'excused' => 'Excused',
+                        'completed' => 'Completed',
+                        'no_show' => 'No show',
                     ]),
                 Tables\Filters\SelectFilter::make('role')
-                    ->label('الدور')
+                    ->label('Role')
                     ->options([
-                        'rider' => 'راكب',
-                        'coach' => 'مدرب',
+                        'rider' => 'Rider',
+                        'coach' => 'Coach',
                     ]),
                 Tables\Filters\SelectFilter::make('ride_id')
-                    ->label('الرايد')
+                    ->label('Ride')
                     ->relationship('ride', 'title'),
             ])
             ->actions([
@@ -218,4 +218,3 @@ class RideParticipantResource extends Resource
         ];
     }
 }
-

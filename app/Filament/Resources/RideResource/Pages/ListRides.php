@@ -17,4 +17,3 @@ class ListRides extends ListRecords
         ];
     }
 }
-

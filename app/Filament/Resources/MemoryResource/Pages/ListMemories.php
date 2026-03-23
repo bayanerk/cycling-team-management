@@ -17,4 +17,3 @@ class ListMemories extends ListRecords
         ];
     }
 }
-

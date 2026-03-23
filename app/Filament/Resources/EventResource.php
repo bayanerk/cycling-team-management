@@ -4,16 +4,16 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\EventResource\Pages;
 use App\Models\Event;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
 use Filament\Forms;
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Section;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Filament\Actions\EditAction;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
 
 class EventResource extends Resource
 {
@@ -26,54 +26,54 @@ class EventResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return 'إدارة الفعاليات';
+        return 'Events';
     }
 
     public static function form(Schema $schema): Schema
     {
         return $schema
             ->components([
-                Section::make('معلومات الفعالية')
+                Section::make('Event information')
                     ->schema([
                         Forms\Components\TextInput::make('title')
-                            ->label('العنوان')
+                            ->label('Title')
                             ->required()
                             ->maxLength(255),
                         Forms\Components\Textarea::make('description')
-                            ->label('الوصف')
+                            ->label('Description')
                             ->rows(3)
                             ->columnSpanFull(),
                         Forms\Components\TextInput::make('location')
-                            ->label('الموقع')
+                            ->label('Location')
                             ->required()
                             ->maxLength(255),
                         Forms\Components\TextInput::make('cost')
-                            ->label('التكلفة')
+                            ->label('Cost')
                             ->numeric()
                             ->minValue(0)
                             ->step(0.01)
                             ->nullable(),
                     ])->columns(2),
-                
-                Section::make('الأوقات')
+
+                Section::make('Schedule')
                     ->schema([
                         Forms\Components\DateTimePicker::make('start_time')
-                            ->label('وقت البدء')
+                            ->label('Start time')
                             ->required(),
                         Forms\Components\DateTimePicker::make('end_time')
-                            ->label('وقت الانتهاء')
+                            ->label('End time')
                             ->required(),
                     ])->columns(2),
-                
-                Section::make('الصورة والمنشئ')
+
+                Section::make('Image & creator')
                     ->schema([
                         Forms\Components\FileUpload::make('image_url')
-                            ->label('صورة الفعالية')
+                            ->label('Event image')
                             ->image()
                             ->directory('events')
                             ->nullable(),
                         Forms\Components\Select::make('created_by')
-                            ->label('المنشئ')
+                            ->label('Created by')
                             ->relationship('creator', 'name')
                             ->required()
                             ->default(fn () => auth()->id())
@@ -88,38 +88,38 @@ class EventResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\ImageColumn::make('image_url')
-                    ->label('الصورة')
+                    ->label('Image')
                     ->circular(),
                 Tables\Columns\TextColumn::make('title')
-                    ->label('العنوان')
+                    ->label('Title')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('location')
-                    ->label('الموقع')
+                    ->label('Location')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('cost')
-                    ->label('التكلفة')
-                    ->formatStateUsing(fn ($state) => $state ? number_format($state, 2) . ' د.أ' : 'مجاني')
+                    ->label('Cost')
+                    ->formatStateUsing(fn ($state) => $state ? number_format($state, 2).' JOD' : 'Free')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('start_time')
-                    ->label('وقت البدء')
+                    ->label('Start time')
                     ->dateTime()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('end_time')
-                    ->label('وقت الانتهاء')
+                    ->label('End time')
                     ->dateTime()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('creator.name')
-                    ->label('المنشئ')
+                    ->label('Created by')
                     ->sortable(),
             ])
             ->filters([
                 Tables\Filters\Filter::make('start_time')
                     ->form([
                         Forms\Components\DatePicker::make('start_from')
-                            ->label('من تاريخ'),
+                            ->label('From'),
                         Forms\Components\DatePicker::make('start_until')
-                            ->label('إلى تاريخ'),
+                            ->label('Until'),
                     ])
                     ->query(function ($query, array $data) {
                         return $query
@@ -160,4 +160,3 @@ class EventResource extends Resource
         ];
     }
 }
-

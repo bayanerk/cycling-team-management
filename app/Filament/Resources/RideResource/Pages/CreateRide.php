@@ -9,4 +9,3 @@ class CreateRide extends CreateRecord
 {
     protected static string $resource = RideResource::class;
 }
-

@@ -10,7 +10,7 @@ class Dashboard extends BaseDashboard
     {
         return 'Mishwar Bicklate';
     }
-    
+
     public static function getNavigationLabel(): string
     {
         return 'Mishwar Bicklate';

@@ -4,11 +4,21 @@ use App\Http\Controllers\AddressController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CoachController;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\GroupRideRequestController;
 use App\Http\Controllers\MemoryController;
 use App\Http\Controllers\OtpController;
 use App\Http\Controllers\RideController;
 use App\Http\Controllers\RideParticipantController;
 use App\Http\Controllers\RideTrackController;
+use App\Http\Controllers\RoadObstacleDetectionController;
+use App\Http\Controllers\Shop\BrandController;
+use App\Http\Controllers\Shop\CartController;
+use App\Http\Controllers\Shop\CategoryController;
+use App\Http\Controllers\Shop\CouponController;
+use App\Http\Controllers\Shop\FavoriteController;
+use App\Http\Controllers\Shop\OrderController;
+use App\Http\Controllers\Shop\ProductController;
+use App\Http\Controllers\Shop\ProductReviewController;
 use App\Http\Controllers\UserFitnessProfileController;
 use App\Http\Controllers\UserLevelController;
 use App\Http\Controllers\UserProfileController;
@@ -30,10 +40,10 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('auth')->group(function () {
     // Registration
     Route::post('/register', [AuthController::class, 'register']);
-    
+
     // Login
     Route::post('/login', [AuthController::class, 'login']);
-    
+
     // OTP routes
     Route::post('/otp/send', [OtpController::class, 'sendOtp']);
     Route::post('/otp/verify', [OtpController::class, 'verifyOtp']);
@@ -43,7 +53,7 @@ Route::prefix('auth')->group(function () {
 Route::middleware('auth:api')->prefix('auth')->group(function () {
     // Logout
     Route::post('/logout', [AuthController::class, 'logout']);
-    
+
     // Get authenticated user
     Route::get('/me', [AuthController::class, 'me']);
 });
@@ -96,42 +106,85 @@ Route::get('/coaches/{coach}', [CoachController::class, 'show']);
 Route::get('/memories', [MemoryController::class, 'index']);
 Route::get('/memories/{memory}', [MemoryController::class, 'show']);
 
+// Shop — catalog (public)
+Route::prefix('shop')->group(function () {
+    Route::get('/categories', [CategoryController::class, 'index']);
+    Route::get('/brands', [BrandController::class, 'index']);
+    Route::get('/products', [ProductController::class, 'index']);
+    Route::get('/products/{product:slug}/reviews', [ProductReviewController::class, 'index']);
+    Route::get('/products/{product:slug}', [ProductController::class, 'show']);
+});
+
 // Rides (Admin only - protected)
 Route::middleware('auth:api')->group(function () {
     Route::post('/rides', [RideController::class, 'store']);
     Route::put('/rides/{ride}', [RideController::class, 'update']);
     Route::delete('/rides/{ride}', [RideController::class, 'destroy']);
-    
+
     // Events (Admin only)
     Route::post('/events', [EventController::class, 'store']);
     Route::put('/events/{event}', [EventController::class, 'update']);
     Route::delete('/events/{event}', [EventController::class, 'destroy']);
-    
+
     // Coaches (Admin only)
     Route::post('/coaches', [CoachController::class, 'store']);
     Route::put('/coaches/{coach}', [CoachController::class, 'update']);
     Route::delete('/coaches/{coach}', [CoachController::class, 'destroy']);
-    
+
     // Memories (Admin only)
     Route::get('/admin/memories', [MemoryController::class, 'indexAdmin']);
     Route::post('/memories', [MemoryController::class, 'store']);
     Route::put('/memories/{memory}', [MemoryController::class, 'update']);
     Route::delete('/memories/{memory}', [MemoryController::class, 'destroy']);
-    
+
     // Ride Participants (User actions)
     Route::post('/rides/{ride}/join', [RideParticipantController::class, 'join']);
     Route::post('/ride-participants/{rideParticipant}/cancel', [RideParticipantController::class, 'cancel']);
     Route::get('/users/me/rides', [RideParticipantController::class, 'myRides']);
     Route::post('/ride-participants/{rideParticipant}/mark-completed', [RideParticipantController::class, 'markCompleted']);
-    
+
     // Ride Tracks (GPS Tracking)
     Route::post('/ride-participants/{rideParticipant}/track', [RideTrackController::class, 'storeTrack']);
     Route::post('/ride-participants/{rideParticipant}/tracks', [RideTrackController::class, 'storeTracks']);
     Route::get('/ride-participants/{rideParticipant}/tracks', [RideTrackController::class, 'getTracks']);
-    
+
+    // Hugging Face Space: ibrahim444/bike — LSTM pothole / bump detection → road_obstacles
+    Route::post('/bike/road-obstacle-detect', [RoadObstacleDetectionController::class, 'detect']);
+
     // Ride Participants (Admin only)
     Route::get('/rides/{ride}/participants', [RideParticipantController::class, 'getParticipants']);
     Route::post('/rides/{ride}/check-attendance', [RideParticipantController::class, 'checkAttendance']);
     Route::post('/ride-participants/{rideParticipant}/excuse', [RideParticipantController::class, 'excuse']);
-});
 
+    // Group ride booking requests (facilitation only — not official rides)
+    Route::get('/group-ride-requests', [GroupRideRequestController::class, 'index']);
+    Route::post('/group-ride-requests', [GroupRideRequestController::class, 'store']);
+    Route::get('/group-ride-requests/{groupRideRequest}', [GroupRideRequestController::class, 'show']);
+    Route::put('/group-ride-requests/{groupRideRequest}', [GroupRideRequestController::class, 'update']);
+
+    // Group ride booking requests — Admin
+    Route::get('/admin/group-ride-requests', [GroupRideRequestController::class, 'adminIndex']);
+    Route::post('/admin/group-ride-requests/{groupRideRequest}/approve', [GroupRideRequestController::class, 'approve']);
+    Route::post('/admin/group-ride-requests/{groupRideRequest}/reject', [GroupRideRequestController::class, 'reject']);
+
+    // Shop — cart, favorites, coupons, orders, reviews
+    Route::prefix('shop')->group(function () {
+        Route::get('/cart', [CartController::class, 'index']);
+        Route::post('/cart', [CartController::class, 'store']);
+        Route::put('/cart/{cart}', [CartController::class, 'update']);
+        Route::delete('/cart/{cart}', [CartController::class, 'destroy']);
+
+        Route::get('/favorites', [FavoriteController::class, 'index']);
+        Route::post('/favorites', [FavoriteController::class, 'store']);
+        Route::delete('/favorites/{favorite}', [FavoriteController::class, 'destroy']);
+
+        Route::post('/coupons/validate', [CouponController::class, 'validateCoupon']);
+
+        Route::get('/orders', [OrderController::class, 'index']);
+        Route::post('/orders', [OrderController::class, 'store']);
+        Route::get('/orders/{order}', [OrderController::class, 'show']);
+        Route::post('/orders/{order}/cancel', [OrderController::class, 'cancel']);
+
+        Route::post('/products/{product:slug}/reviews', [ProductReviewController::class, 'store']);
+    });
+});

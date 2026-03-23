@@ -17,4 +17,3 @@ class EditUserFitnessProfile extends EditRecord
         ];
     }
 }
-

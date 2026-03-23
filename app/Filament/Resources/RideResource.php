@@ -4,16 +4,16 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\RideResource\Pages;
 use App\Models\Ride;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
 use Filament\Forms;
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Section;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Filament\Actions\EditAction;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
 
 class RideResource extends Resource
 {
@@ -26,91 +26,91 @@ class RideResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return 'إدارة الرايدات';
+        return 'Ride Management';
     }
 
     public static function form(Schema $schema): Schema
     {
         return $schema
             ->components([
-                Section::make('معلومات الرايد')
+                Section::make('Ride information')
                     ->schema([
                         Forms\Components\TextInput::make('title')
-                            ->label('العنوان')
+                            ->label('Title')
                             ->required()
                             ->maxLength(255),
                         Forms\Components\TextInput::make('location')
-                            ->label('الموقع')
+                            ->label('Location')
                             ->required()
                             ->maxLength(255),
                         Forms\Components\Select::make('level')
-                            ->label('المستوى')
+                            ->label('Level')
                             ->options([
-                                'Beginner' => 'مبتدئ',
-                                'Intermediate' => 'متوسط',
-                                'Advanced' => 'متقدم',
+                                'Beginner' => 'Beginner',
+                                'Intermediate' => 'Intermediate',
+                                'Advanced' => 'Advanced',
                             ])
                             ->required(),
                         Forms\Components\TextInput::make('distance')
-                            ->label('المسافة (كم)')
+                            ->label('Distance (km)')
                             ->numeric()
                             ->minValue(0)
                             ->step(0.01)
                             ->required(),
                         Forms\Components\TextInput::make('cost')
-                            ->label('التكلفة')
+                            ->label('Cost')
                             ->numeric()
                             ->minValue(0)
                             ->step(0.01)
                             ->nullable(),
                     ])->columns(2),
-                
-                Section::make('الأوقات')
+
+                Section::make('Schedule')
                     ->schema([
                         Forms\Components\DateTimePicker::make('gathering_time')
-                            ->label('وقت التجمع')
+                            ->label('Gathering time')
                             ->required(),
                         Forms\Components\DateTimePicker::make('start_time')
-                            ->label('وقت البدء')
+                            ->label('Start time')
                             ->required(),
                         Forms\Components\DateTimePicker::make('end_time')
-                            ->label('وقت الانتهاء')
+                            ->label('End time')
                             ->required(),
                     ])->columns(3),
-                
-                Section::make('الموقع الجغرافي')
+
+                Section::make('Geography')
                     ->schema([
                         Forms\Components\TextInput::make('start_lat')
-                            ->label('خط العرض - البداية')
+                            ->label('Start latitude')
                             ->numeric()
                             ->nullable(),
                         Forms\Components\TextInput::make('start_lng')
-                            ->label('خط الطول - البداية')
+                            ->label('Start longitude')
                             ->numeric()
                             ->nullable(),
                         Forms\Components\TextInput::make('end_lat')
-                            ->label('خط العرض - النهاية')
+                            ->label('End latitude')
                             ->numeric()
                             ->nullable(),
                         Forms\Components\TextInput::make('end_lng')
-                            ->label('خط الطول - النهاية')
+                            ->label('End longitude')
                             ->numeric()
                             ->nullable(),
                         Forms\Components\TextInput::make('break_location')
-                            ->label('موقع الاستراحة')
+                            ->label('Break location')
                             ->maxLength(255)
                             ->nullable(),
                     ])->columns(2),
-                
-                Section::make('الصورة والمنشئ')
+
+                Section::make('Image & creator')
                     ->schema([
                         Forms\Components\FileUpload::make('image_url')
-                            ->label('صورة الرايد')
+                            ->label('Ride image')
                             ->image()
                             ->directory('rides')
                             ->nullable(),
                         Forms\Components\Select::make('created_by')
-                            ->label('المنشئ')
+                            ->label('Created by')
                             ->relationship('creator', 'name')
                             ->required()
                             ->default(fn () => auth()->id())
@@ -125,17 +125,17 @@ class RideResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\ImageColumn::make('image_url')
-                    ->label('الصورة')
+                    ->label('Image')
                     ->circular(),
                 Tables\Columns\TextColumn::make('title')
-                    ->label('العنوان')
+                    ->label('Title')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('location')
-                    ->label('الموقع')
+                    ->label('Location')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('level')
-                    ->label('المستوى')
+                    ->label('Level')
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
                         'Beginner' => 'success',
@@ -144,41 +144,41 @@ class RideResource extends Resource
                         default => 'gray',
                     })
                     ->formatStateUsing(fn (string $state): string => match ($state) {
-                        'Beginner' => 'مبتدئ',
-                        'Intermediate' => 'متوسط',
-                        'Advanced' => 'متقدم',
+                        'Beginner' => 'Beginner',
+                        'Intermediate' => 'Intermediate',
+                        'Advanced' => 'Advanced',
                         default => $state,
                     }),
                 Tables\Columns\TextColumn::make('distance')
-                    ->label('المسافة (كم)')
+                    ->label('Distance (km)')
                     ->sortable()
-                    ->formatStateUsing(fn ($state) => number_format($state, 2) . ' كم'),
+                    ->formatStateUsing(fn ($state) => number_format($state, 2).' km'),
                 Tables\Columns\TextColumn::make('start_time')
-                    ->label('وقت البدء')
+                    ->label('Start time')
                     ->dateTime()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('creator.name')
-                    ->label('المنشئ')
+                    ->label('Created by')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('participants_count')
-                    ->label('المشاركون')
+                    ->label('Participants')
                     ->counts('participants')
                     ->sortable(),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('level')
-                    ->label('المستوى')
+                    ->label('Level')
                     ->options([
-                        'Beginner' => 'مبتدئ',
-                        'Intermediate' => 'متوسط',
-                        'Advanced' => 'متقدم',
+                        'Beginner' => 'Beginner',
+                        'Intermediate' => 'Intermediate',
+                        'Advanced' => 'Advanced',
                     ]),
                 Tables\Filters\Filter::make('start_time')
                     ->form([
                         Forms\Components\DatePicker::make('start_from')
-                            ->label('من تاريخ'),
+                            ->label('From'),
                         Forms\Components\DatePicker::make('start_until')
-                            ->label('إلى تاريخ'),
+                            ->label('Until'),
                     ])
                     ->query(function ($query, array $data) {
                         return $query
@@ -219,4 +219,3 @@ class RideResource extends Resource
         ];
     }
 }
-
